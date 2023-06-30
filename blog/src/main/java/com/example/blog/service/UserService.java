@@ -1,9 +1,6 @@
 package com.example.blog.service;
 
-import com.example.blog.dto.LoginRequestDto;
-import com.example.blog.dto.LoginResponseDto;
-import com.example.blog.dto.SignUpRequestDto;
-import com.example.blog.dto.SignUpResponseDto;
+import com.example.blog.dto.*;
 import com.example.blog.entity.User;
 import com.example.blog.jwt.JwtUtil;
 import com.example.blog.repository.UserRepository;
@@ -21,7 +18,7 @@ public class UserService {
         this.jwtUtil = jwtUtil;
     }
 
-    public SignUpResponseDto createUser(SignUpRequestDto signUpRequestDto) {
+    public MessageResponseDto createUser(SignUpRequestDto signUpRequestDto) {
         String username = signUpRequestDto.getUsername();
         String password = signUpRequestDto.getPassword();
 
@@ -34,11 +31,11 @@ public class UserService {
         userRepository.save(user);
 
         // 저장 성공하면 메세지와 상태코드 반환(HttpStatus로 이후 Refactor 가능할 듯)
-        return new SignUpResponseDto("회원가입 성공", "200");
+        return new MessageResponseDto("회원가입 성공", "200");
     }
 
 
-    public LoginResponseDto loginUser(LoginRequestDto loginRequestDto, HttpServletResponse res) {
+    public MessageResponseDto loginUser(LoginRequestDto loginRequestDto, HttpServletResponse res) {
         String username = loginRequestDto.getUsername();
         String password = loginRequestDto.getPassword();
 
@@ -55,6 +52,6 @@ public class UserService {
         String token = jwtUtil.createToken(user.getUsername());
         jwtUtil.addJwtToCookie(token, res);
 
-        return new LoginResponseDto("로그인 성공", "200");
+        return new MessageResponseDto("로그인 성공", "200");
     }
 }

@@ -1,9 +1,6 @@
 package com.example.blog.controller;
 
-import com.example.blog.dto.LoginRequestDto;
-import com.example.blog.dto.LoginResponseDto;
-import com.example.blog.dto.SignUpRequestDto;
-import com.example.blog.dto.SignUpResponseDto;
+import com.example.blog.dto.*;
 import com.example.blog.service.UserService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
@@ -20,12 +17,12 @@ public class UserController {
     }
 
     @PostMapping("/sign-up")
-    public SignUpResponseDto createUser(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
+    public MessageResponseDto createUser(@RequestBody @Valid SignUpRequestDto signUpRequestDto) {
         return userService.createUser(signUpRequestDto);
     }
 
     @PostMapping("/login")
-    public LoginResponseDto loginUser(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse res) {
+    public MessageResponseDto loginUser(@RequestBody LoginRequestDto loginRequestDto, HttpServletResponse res) {
         return userService.loginUser(loginRequestDto, res);
     }
 

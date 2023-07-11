@@ -29,7 +29,7 @@ public class Post extends Timestamped{
     @JoinColumn(name = "user_id")
     User user;
 
-    @OneToMany(mappedBy = "post")
+    @OneToMany(mappedBy = "post", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @OrderBy("createdAt DESC")
     private List<Comment> commentList = new ArrayList<>();
 

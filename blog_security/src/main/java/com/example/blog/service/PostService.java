@@ -5,10 +5,7 @@ import com.example.blog.dto.PostRequestDto;
 import com.example.blog.dto.PostResponseDto;
 import com.example.blog.entity.Post;
 import com.example.blog.entity.UserRoleEnum;
-import com.example.blog.jwt.JwtUtil;
 import com.example.blog.repository.PostRepository;
-import com.example.blog.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,31 +16,14 @@ import java.util.List;
 @Service
 public class PostService {
 
-    private UserRepository userRepository;
     private PostRepository postRepository;
-    private JwtUtil jwtUtil;
 
     //@Autowired // 생성자 1개일 때는 생략가능
-    public PostService(PostRepository postRepository, JwtUtil jwtUtil, UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public PostService(PostRepository postRepository) {
         this.postRepository = postRepository;
-        this.jwtUtil = jwtUtil;
     }
 
-    public PostResponseDto createPost(String tokenValue, PostRequestDto requestDto) {
-        // JWT 토큰 substring
-        String token = jwtUtil.substringToken(tokenValue);
-
-        // 토큰 검증
-        if(!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-        }
-
-        // 토큰에서 사용자 정보 가져오기
-        Claims info = jwtUtil.getUserInfoFromToken(token);
-        // username
-        String username = info.getSubject();
-
+    public PostResponseDto createPost(String username, PostRequestDto requestDto) {
         // RequsetDto -> Entity(데이터베이스 교환 객체)
         Post post = new Post(requestDto, username);
         // DB 저장
@@ -65,25 +45,9 @@ public class PostService {
     }
 
     @Transactional // 변경 적용하기 위해
-    public PostResponseDto updatePost(String tokenValue, Long id, PostRequestDto requestDto) {
+    public PostResponseDto updatePost(String role, String username, Long id, PostRequestDto requestDto) {
         // 해당 post가 DB에 존재하는지 확인
         Post post = findPost(id);
-
-        // JWT 토큰 substring
-        String token = jwtUtil.substringToken(tokenValue);
-
-        // 토큰 검증
-        if(!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-        }
-
-        // 토큰에서 사용자 정보 가져오기
-        Claims info = jwtUtil.getUserInfoFromToken(token);
-        // username
-        String username = info.getSubject();
-
-        // role
-        String role = info.get(JwtUtil.AUTHORIZATION_KEY, String.class);
 
         // 사용자가 ADMIN 권한이거나 작성자일 때만 수정이 가능
         if(!(role.equals(UserRoleEnum.ADMIN.toString()) || username.equals(post.getUsername()))) {
@@ -98,25 +62,9 @@ public class PostService {
     }
 
 
-    public ResponseEntity<MessageResponseDto> deletePost(String tokenValue, Long id) {
+    public ResponseEntity<MessageResponseDto> deletePost(String role, String username, Long id) {
         // 해당 post가 DB에 존재하는지 확인
         Post post = findPost(id);
-
-        // JWT 토큰 substring
-        String token = jwtUtil.substringToken(tokenValue);
-
-        // 토큰 검증
-        if(!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-        }
-
-        // 토큰에서 사용자 정보 가져오기
-        Claims info = jwtUtil.getUserInfoFromToken(token);
-        // username
-        String username = info.getSubject();
-
-        // role
-        String role = info.get(JwtUtil.AUTHORIZATION_KEY, String.class);
 
         // 사용자가 ADMIN 권한이거나 작성자일 때만 수정이 가능
         if(!(role.equals(UserRoleEnum.ADMIN.toString()) || username.equals(post.getUsername()))) {

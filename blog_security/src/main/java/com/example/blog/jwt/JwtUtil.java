@@ -65,8 +65,9 @@ public class JwtUtil {
         if (StringUtils.hasText(tokenValue) && tokenValue.startsWith(BEARER_PREFIX)) { // 토큰이 공백이 아니고 Bearer로 시작할 때
             return tokenValue.substring(7); // 자르는 위치 잘 보기
         }
-        logger.error("토큰을 찾을 수 없습니다.");
-        throw new NullPointerException("토큰을 찾을 수 없습니다.");
+//        logger.error("토큰을 찾을 수 없습니다.");
+//        throw new NullPointerException("토큰을 찾을 수 없습니다.");
+        return null;
     }
 
     // 3. JWT 검증

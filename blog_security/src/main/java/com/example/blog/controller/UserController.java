@@ -25,9 +25,4 @@ public class UserController {
         return userService.createUser(signUpRequestDto);
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<MessageResponseDto> loginUser(@RequestBody LoginRequestDto loginRequestDto) {
-        return userService.loginUser(loginRequestDto);
-    }
-
 }

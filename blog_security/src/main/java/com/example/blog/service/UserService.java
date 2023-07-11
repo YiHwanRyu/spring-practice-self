@@ -39,7 +39,7 @@ public class UserService {
 
         // 회원 중복 확인
         Optional<User> checkUsername = userRepository.findByUsername(username);
-        if(checkUsername.isPresent()){
+        if (checkUsername.isPresent()) {
             throw new IllegalArgumentException("중복된 username 입니다.");
         }
 
@@ -56,30 +56,7 @@ public class UserService {
         User user = new User(username, password, role);
         userRepository.save(user);
 
-        return new ResponseEntity<>(new MessageResponseDto("회원가입 성공!" , HttpStatus.OK.toString()), HttpStatus.OK);
+        return new ResponseEntity<>(new MessageResponseDto("회원가입 성공!", HttpStatus.OK.toString()), HttpStatus.OK);
     }
 
-
-    public ResponseEntity<MessageResponseDto> loginUser(@RequestBody LoginRequestDto requestDto) {
-        String username = requestDto.getUsername();
-        String password = requestDto.getPassword();
-
-        // 사용자 확인
-        User user = userRepository.findByUsername(username).orElseThrow(
-                () -> new IllegalArgumentException("회원을 찾을 수 없습니다.")
-        );
-
-        // 비밀번호 확인
-        if(!passwordEncoder.matches(password, user.getPassword())){
-            throw new IllegalArgumentException("회원을 찾을 수 없습니다.");
-        }
-
-        // JWT 생성
-        String token = jwtUtil.createToken(user.getUsername(), user.getRole());
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(JwtUtil.AUTHORIZATION_HEADER, token);
-
-        return new ResponseEntity<>(new MessageResponseDto("로그인 성공!", HttpStatus.OK.toString()), headers, HttpStatus.OK);
-    }
 }

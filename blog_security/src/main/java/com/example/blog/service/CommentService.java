@@ -6,11 +6,8 @@ import com.example.blog.dto.MessageResponseDto;
 import com.example.blog.entity.Comment;
 import com.example.blog.entity.Post;
 import com.example.blog.entity.UserRoleEnum;
-import com.example.blog.jwt.JwtUtil;
 import com.example.blog.repository.CommentRepository;
 import com.example.blog.repository.PostRepository;
-import com.example.blog.repository.UserRepository;
-import io.jsonwebtoken.Claims;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -20,28 +17,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class CommentService {
     private PostRepository postRepository;
     private CommentRepository commentRepository;
-    private JwtUtil jwtUtil;
 
-    public CommentService(PostRepository postRepository, CommentRepository commentRepository, JwtUtil jwtUtil) {
+    public CommentService(PostRepository postRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.commentRepository = commentRepository;
-        this.jwtUtil = jwtUtil;
     }
 
     // 댓글 생성
-    public CommentResponseDto createComment(String tokenValue, CommentRequestDto requestDto) {
-        String token = jwtUtil.substringToken(tokenValue);
+    public CommentResponseDto createComment(String username, CommentRequestDto requestDto) {
 
-        if(!jwtUtil.validateToken(token)){
-            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-        }
         // 선택한 post 찾아옴
         Post post = findPost(requestDto.getPostId());
-
-        // 토큰에서 사용자 정보 가져오기
-        Claims info = jwtUtil.getUserInfoFromToken(token);
-        // username
-        String username = info.getSubject();
 
         // 댓글 객체
         Comment comment = new Comment(requestDto, username);
@@ -55,25 +41,8 @@ public class CommentService {
     }
 
     @Transactional
-    public CommentResponseDto updateComment(String tokenValue, Long id, CommentRequestDto requestDto) {
+    public CommentResponseDto updateComment(String role, String username, Long id, CommentRequestDto requestDto) {
         Comment comment = findComment(id);
-
-        // JWT 토큰 substring
-        String token = jwtUtil.substringToken(tokenValue);
-
-        // 토큰 검증
-        if(!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-        }
-
-        // 토큰에서 사용자 정보 가져오기
-        Claims info = jwtUtil.getUserInfoFromToken(token);
-
-        // username
-        String username = info.getSubject();
-
-        // role
-        String role = info.get(JwtUtil.AUTHORIZATION_KEY, String.class);
 
         if(!(role.equals(UserRoleEnum.ADMIN.toString()) || username.equals(comment.getUsername()))){
             throw new IllegalArgumentException("해당 댓글을 작성한 사용자나 관리자가 아닙니다.");
@@ -85,25 +54,8 @@ public class CommentService {
     }
 
 
-    public ResponseEntity<MessageResponseDto> deleteComment(String tokenValue, Long id) {
+    public ResponseEntity<MessageResponseDto> deleteComment(String role, String username, Long id) {
         Comment comment = findComment(id);
-
-        // JWT 토큰 substring
-        String token = jwtUtil.substringToken(tokenValue);
-
-        // 토큰 검증
-        if(!jwtUtil.validateToken(token)) {
-            throw new IllegalArgumentException("토큰이 유효하지 않습니다.");
-        }
-
-        // 토큰에서 사용자 정보 가져오기
-        Claims info = jwtUtil.getUserInfoFromToken(token);
-
-        // username
-        String username = info.getSubject();
-
-        // role
-        String role = info.get(JwtUtil.AUTHORIZATION_KEY, String.class);
 
         if(!(role.equals(UserRoleEnum.ADMIN.toString()) || username.equals(comment.getUsername()))){
             throw new IllegalArgumentException("해당 댓글을 작성한 사용자나 관리자가 아닙니다.");

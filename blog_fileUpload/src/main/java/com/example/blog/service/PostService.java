@@ -61,7 +61,7 @@ public class PostService {
         return new PostResponseDto(post);
     }
 
-
+    @Transactional
     public ResponseEntity<MessageResponseDto> deletePost(String role, String username, Long id) {
         // 해당 post가 DB에 존재하는지 확인
         Post post = findPost(id);

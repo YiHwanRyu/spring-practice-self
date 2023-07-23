@@ -53,7 +53,7 @@ public class CommentService {
         return new CommentResponseDto(comment);
     }
 
-
+    @Transactional
     public ResponseEntity<MessageResponseDto> deleteComment(String role, String username, Long id) {
         Comment comment = findComment(id);
 

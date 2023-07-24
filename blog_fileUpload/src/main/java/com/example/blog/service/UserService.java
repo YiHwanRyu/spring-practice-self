@@ -1,19 +1,16 @@
 package com.example.blog.service;
 
-import com.example.blog.dto.LoginRequestDto;
 import com.example.blog.dto.MessageResponseDto;
 import com.example.blog.dto.SignUpRequestDto;
 import com.example.blog.entity.User;
 import com.example.blog.entity.UserRoleEnum;
-import com.example.blog.jwt.JwtUtil;
+import com.example.blog.utils.JwtUtil;
 import com.example.blog.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.Optional;
 

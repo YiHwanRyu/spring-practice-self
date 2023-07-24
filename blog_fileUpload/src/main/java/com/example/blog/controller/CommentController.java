@@ -4,7 +4,6 @@ import com.example.blog.auth.UserDetailsImpl;
 import com.example.blog.dto.CommentRequestDto;
 import com.example.blog.dto.CommentResponseDto;
 import com.example.blog.dto.MessageResponseDto;
-import com.example.blog.jwt.JwtUtil;
 import com.example.blog.service.CommentService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;

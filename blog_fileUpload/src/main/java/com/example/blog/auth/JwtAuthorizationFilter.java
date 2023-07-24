@@ -1,6 +1,6 @@
 package com.example.blog.auth;
 
-import com.example.blog.jwt.JwtUtil;
+import com.example.blog.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

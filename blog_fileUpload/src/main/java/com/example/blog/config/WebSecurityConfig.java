@@ -1,6 +1,9 @@
-package com.example.blog.auth;
+package com.example.blog.config;
 
-import com.example.blog.jwt.JwtUtil;
+import com.example.blog.auth.JwtAuthenticationFilter;
+import com.example.blog.auth.JwtAuthorizationFilter;
+import com.example.blog.auth.UserDetailsServiceImpl;
+import com.example.blog.utils.JwtUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -11,6 +14,7 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -69,7 +73,8 @@ public class WebSecurityConfig {
                             .anyRequest().authenticated() // 그외 모든 요청 인증 처리
                 );
 
-        http.formLogin(Customizer.withDefaults()); // 팝업 형태의 인증절차, 기본로그인 페이지
+        http.httpBasic(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable); // 팝업 형태의 인증절차, 기본로그인 페이지 제거
 
         // 필터관리
         http.addFilterBefore(jwtAuthorizationFilter(), JwtAuthenticationFilter.class);

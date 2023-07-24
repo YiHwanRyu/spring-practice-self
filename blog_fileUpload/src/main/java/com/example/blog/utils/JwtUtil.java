@@ -1,4 +1,4 @@
-package com.example.blog.jwt;
+package com.example.blog.utils;
 
 
 import com.example.blog.entity.UserRoleEnum;

@@ -3,7 +3,7 @@ package com.example.blog.auth;
 import com.example.blog.dto.LoginRequestDto;
 import com.example.blog.dto.MessageResponseDto;
 import com.example.blog.entity.UserRoleEnum;
-import com.example.blog.jwt.JwtUtil;
+import com.example.blog.utils.JwtUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

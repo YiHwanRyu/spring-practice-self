@@ -4,11 +4,12 @@ import com.example.blog.auth.UserDetailsImpl;
 import com.example.blog.dto.MessageResponseDto;
 import com.example.blog.dto.PostRequestDto;
 import com.example.blog.dto.PostResponseDto;
-import com.example.blog.jwt.JwtUtil;
 import com.example.blog.service.PostService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -32,8 +33,13 @@ public class PostController {
     }
 
     @PostMapping("/posts")
-    public PostResponseDto createPost(@AuthenticationPrincipal UserDetailsImpl userDetails, @RequestBody PostRequestDto requestDto) {
-        return postService.createPost(userDetails.getUsername(), requestDto);
+    public PostResponseDto createPost(@AuthenticationPrincipal UserDetailsImpl userDetails,
+                                      @RequestPart("data") @Valid PostRequestDto requestDto,
+                                      @RequestPart(value = "titleImg") MultipartFile titleImgMultiPartFile,
+                                      @RequestPart(value = "subImg1", required = false) MultipartFile subImg1MultiPartFile,
+                                      @RequestPart(value = "subImg2", required = false) MultipartFile subImg2MultiPartFile
+                                      ) {
+        return postService.createPost(userDetails.getUsername(), requestDto, titleImgMultiPartFile, subImg1MultiPartFile, subImg2MultiPartFile);
     }
 
     @PutMapping("/posts/{id}")

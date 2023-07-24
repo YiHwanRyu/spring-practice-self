@@ -6,26 +6,44 @@ import com.example.blog.dto.PostResponseDto;
 import com.example.blog.entity.Post;
 import com.example.blog.entity.UserRoleEnum;
 import com.example.blog.repository.PostRepository;
+import com.example.blog.utils.AwsS3Util;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 @Service
 public class PostService {
 
-    private PostRepository postRepository;
+    private final PostRepository postRepository;
+    private final AwsS3Util awsS3Util;
 
     //@Autowired // 생성자 1개일 때는 생략가능
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, AwsS3Util awsS3Util) {
         this.postRepository = postRepository;
+        this.awsS3Util = awsS3Util;
     }
 
-    public PostResponseDto createPost(String username, PostRequestDto requestDto) {
+    public PostResponseDto createPost(String username, PostRequestDto requestDto, MultipartFile titleImgMultiPartFile, MultipartFile subImg1MultiPartFile, MultipartFile subImg2MultiPartFile) {
+        //urls
+        String titleImgUrl;
+        String subImgurl1 = "";
+        String subImgurl2 = "";
+
+        // s3에 이미지 파일 저장 및 url
+        titleImgUrl = awsS3Util.uploadImgFile(titleImgMultiPartFile, "postImg");
+        if(!subImg1MultiPartFile.isEmpty()) {
+            subImgurl1 = awsS3Util.uploadImgFile(subImg1MultiPartFile, "postImg");
+        }
+        if(!subImg2MultiPartFile.isEmpty()) {
+            subImgurl2 = awsS3Util.uploadImgFile(subImg2MultiPartFile, "postImg");
+        }
+
         // RequsetDto -> Entity(데이터베이스 교환 객체)
-        Post post = new Post(requestDto, username);
+        Post post = new Post(requestDto, username, titleImgUrl, subImgurl1, subImgurl2);
         // DB 저장
         Post savePost = postRepository.save(post);
         // Entity -> ResponseDto
